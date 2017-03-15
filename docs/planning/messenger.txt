@@ -1,0 +1,115 @@
+---------------------------------------------------------------------
+	MESSENGER											  {MESSENGER}
+---------------------------------------------------------------------
+
+Attributes:
+
+	output:			OUTPUT
+	user_list:		HASH[USER]
+	group_list:		HASH[GROUP]
+	message_list:	HASH[MESSAGE]		-- By virtue of mapping, creates message_id
+	
+---------------------------------------------------------------------
+	MESSENGER
+---------------------------------------------------------------------
+
+Initialization:
+
+	make
+	do
+		output.make
+		create {HASH_TABLE[USER]}		user_list.make (0)
+		create {HASH_TABLE[GROUP]}		group_list.make (0)
+		create {HASH_TABLE[MESSAGE]}	message_list.make (0)
+	end
+	
+Commands Planning:
+
+	add_user (uid: INTEGER_64; user_name: STRING)
+	local
+		l_user: USER
+	do
+		create l_user.make (uid, user_name)
+		user_list.force (l_user)
+	end
+	
+	add_group (gid: INTEGER_64; group_name: STRING)
+	local
+		l_group: GROUP
+	do
+		create l_group.make (gid, group_name)
+		group_list.force (l_group)
+	end
+	
+	register_user (uid: INTEGER_64; gid: INTEGER_64)
+	do			        
+		get_group (gid).register_user (uid)
+	end
+	
+	send_message (uid: INTEGER_64; gid: INTEGER_64; txt: STRING)
+	do			
+	
+	end
+	
+	read_message (uid: INTEGER_64; mid: INTEGER_64)
+	do				        
+	
+	end
+	
+	delete_message (uid: INTEGER_64; mid: INTEGER_64)
+	do				      
+	
+	end
+	
+	set_message_preview	(n: INTEGER_64)
+	do		
+	
+	end
+	
+Queries Planning:
+
+	list_new_messages (uid: INTEGER_64)
+	do
+		l_user := get_user (uid)
+		across l_user.get_user_messages from m
+		if l_user.get_user_messages.get_status (m) ~ "unread" then
+			
+	end
+	
+Output Planning:
+
+	out: STRING
+	do
+		if output.info_is_required then
+			-- export info from get_...
+		end
+		
+		Result := output.print_output
+	end
+			
+Information Export:
+
+	get_user (uid: INTEGER_64): USER
+	do
+		-- Some across notation with Result
+	end
+	
+	get_message (mid: INTEGER_64): MESSAGE
+	do
+		-- Some across notation with Result
+	end
+	
+	get_group (mid: INTEGER_64): GROUP
+	do
+		-- Some across notation with Result
+	end
+	
+---------------------------------------------------------------------
+	MESSENGER												 {OUTPUT}
+---------------------------------------------------------------------
+
+	
+	
+---------------------------------------------------------------------
+	MESSENGER											  {MESSENGER}
+---------------------------------------------------------------------

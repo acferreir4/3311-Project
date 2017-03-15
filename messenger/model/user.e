@@ -24,4 +24,10 @@ feature {USER} -- Features
 	user_name: STRING
 	user_id: INTEGER_64
 
+feature
+
+	print_message: STRING
+	do
+		create Result.make_empty
+	end
 end
