@@ -5,9 +5,9 @@
 Attributes:
 
 	output:			OUTPUT
-	user_list:		HASH[USER]
-	group_list:		HASH[GROUP]
-	message_list:	HASH[MESSAGE]		-- By virtue of mapping, creates message_id
+	user_list:		HASH_TABLE[USER]
+	group_list:		HASH_TABLE[GROUP]
+	message_list:	HASH_TABLE[MESSAGE]		-- By virtue of mapping, creates message_id
 	
 ---------------------------------------------------------------------
 	MESSENGER
@@ -108,7 +108,20 @@ Information Export:
 	MESSENGER												 {OUTPUT}
 ---------------------------------------------------------------------
 
+	get_user_list: HASH_TABLE[USER]
+	do
+		Result := user_list
+	end
 	
+	get_group_list: HASH_TABLE[GROUP]
+	do
+		Result := group_list
+	end
+	
+	get_message_list: HASH_TABLE[MESSAGE]
+	do
+		Result := message_list
+	end
 	
 ---------------------------------------------------------------------
 	MESSENGER											  {MESSENGER}

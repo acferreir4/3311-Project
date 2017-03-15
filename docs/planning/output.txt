@@ -8,7 +8,7 @@ Attributes:
 	status_message: 	STRING
 	print_state:		INTEGER_64		--0 for default, 1 for error
 	status_counter:		INTEGER_64
-	info_required:		BOOLEAN
+	messenger:			MESSENGER
 	
 ---------------------------------------------------------------------
 	OUTPUT											 		 
@@ -24,10 +24,12 @@ Attributes:
 Initialization:
 	
 	make
+	local
+		messenger_access :MESSENGER_ACCESS
 	do
 		status_counter	:= 0
 		status_message	:= "OK"
-		info_required	:= TRUE	
+		messenger 		:= messenger_access.m
 		create error_message.make_from_empty
 	end
 
@@ -35,11 +37,10 @@ Commands Planning:
 
 	internal_reset
 	do
-		error_message	:= ""
 		print_state		:= 0
-		status_counter	:= status_counter + 1
+		error_message	:= ""
 		status_message	:= "OK"
-		info_required 	:= TRUE
+		status_counter	:= status_counter + 1
 	end
 	
 	error_flag (a_error_flag: INTEGER)
@@ -48,17 +49,11 @@ Commands Planning:
 			when 0 then error_message := ""
 			when 1 then error_message := ""
 		end
-		status_message	:= "ERROR"
-		info_required	:= FALSE
 		print_state		:= 1
+		status_message	:= "ERROR"
 	end
 
 Queries Planning:
-	
-	info_is_required: BOOLEAN
-	do
-		Result := info_required
-	end
 	
 	print_output: STRING
 	do
@@ -74,6 +69,7 @@ Queries Planning:
 	OUTPUT											 		 {OUTPUT}
 ---------------------------------------------------------------------
 
+(Internal Query Blocks)
 Internal Queries Planning:
 
 	print_status_message: STRING
@@ -91,38 +87,53 @@ Internal Queries Planning:
 	end
 	
 	print_users: STRING
+	local
+		l_user_list: HASH_TABLE[USER]
 	do
 		create Result.make_from_string("  ")
 		Result.append ("Users:%N")
-		-- Receive info from MESSENGER
+		l_user_list := messenger.get_user_list
+		-- Print
 	end
 	
 	print_groups: STRING
+	local
+		l_group_list: HASH_TABLE[GROUP]
 	do
 		create Result.make_from_string("  ")
 		Result.append ("Groups:%N")
-		-- Receive info from MESSENGER
+		l_group_list := messenger.get_group_list
+		-- Print
 	end
 	
 	print_registrations: STRING
+	local
+		l_user_list: HASH_TABLE[USER]
 	do
 		create Result.make_from_string("  ")
 		Result.append ("Registrations:%N")
-		-- Receive info from MESSENGER
+		l_user_list := messenger.get_user_list
+		-- Print
 	end
 	
 	print_all_messages:	STRING
+	local
+		l_message_list: HASH_TABLE[MESSAGE]
 	do
 		create Result.make_from_string("  ")
 		Result.append ("All messages:%N")
-		-- Receive info from MESSENGER
+		l_message_list := messenger.get_message_list
+		-- Print
 	end
 	
 	print_message_state: STRING
+	local
+		l_user_list: HASH_TABLE[USER]
 	do
 		create Result.make_from_string("  ")
 		Result.append ("Message state:%N")
-		-- Receive info from MESSENGER
+		l_user_list := messenger.get_user_list
+		-- Print
 	end
 	
 ---------------------------------------------------------------------
