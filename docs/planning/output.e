@@ -1,22 +1,23 @@
----------------------------------------------------------------------
-	OUTPUT						     {OUTPUT}
----------------------------------------------------------------------
+-------------------------------------------------------------------------------
+	OUTPUT						     	       {OUTPUT}
+-------------------------------------------------------------------------------
 
 Attributes:
 
 	error_message:		STRING
 	status_message: 	STRING
-	print_state:		INTEGER_64		--0 for default, 1 for error
+	print_state:		INTEGER_64	   --0 for default, 1 for error
 	status_counter:		INTEGER_64
+	preview_length:		INTEGER_64
 	messenger:		MESSENGER
 	
----------------------------------------------------------------------
+-------------------------------------------------------------------------------
 	OUTPUT								 
----------------------------------------------------------------------
+-------------------------------------------------------------------------------
 -- TODO:
 --		Receive information on the model from MESSENGER
---			- MESSENGER gives this using "get" queries, called during
---			  the "out" query in MESSENGER
+--			- MESSENGER gives this using "get" queries, called 
+--			  during the "out" query in MESSENGER
 --			- Build functions and variables to receive this
 --		Flesh out the error_flag with the required error messages given
 
@@ -34,15 +35,12 @@ Initialization:
 	end
 
 Commands Planning:
-
-	internal_reset
-	do
-		print_state	:= 0
-		error_message	:= ""
-		status_message	:= "OK"
-		status_counter	:= status_counter + 1
-	end
 	
+	set_preview_length (a_preview_length: INTEGER_64)
+	do
+		preview_length := a_preview_length
+	end	
+
 	error_flag (a_error_flag: INTEGER)
 	do
 		inspect a_error_flag
@@ -64,10 +62,24 @@ Queries Planning:
 		end
 		internal_reset
 	end
-	
----------------------------------------------------------------------
-	OUTPUT						     {OUTPUT}
----------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+	OUTPUT						     	       {OUTPUT}
+-------------------------------------------------------------------------------
+
+Internal Commands Planning:
+
+	internal_reset
+	do
+		print_state	:= 0
+		error_message	:= ""
+		status_message	:= "OK"
+		status_counter	:= status_counter + 1
+	end
+
+-------------------------------------------------------------------------------
+	OUTPUT						     	       {OUTPUT}
+-------------------------------------------------------------------------------
 
 (Internal Query Blocks)
 Internal Queries Planning:
@@ -116,7 +128,7 @@ Internal Queries Planning:
 		-- Print
 	end
 	
-	print_all_messages:	STRING
+	print_all_messages: STRING
 	local
 		l_message_list: HASH_TABLE[MESSAGE]
 	do
@@ -133,12 +145,20 @@ Internal Queries Planning:
 		create Result.make_from_string("  ")
 		Result.append ("Message state:%N")
 		l_user_list := messenger.get_user_list
-		-- Print
+		-- Print based on preview_length var
+		across 
+			l_user_list as state 
+		loop
+			across
+				state.item.get_user_messages as message
+			loop
+		end
+			
 	end
 	
----------------------------------------------------------------------
-	OUTPUT						     {OUTPUT}
----------------------------------------------------------------------
+-------------------------------------------------------------------------------
+	OUTPUT						     	       {OUTPUT}
+-------------------------------------------------------------------------------
 
 Cumulative Queries Planning:
 	

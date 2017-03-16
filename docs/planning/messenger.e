@@ -1,17 +1,18 @@
----------------------------------------------------------------------
-	MESSENGER					  {MESSENGER}
----------------------------------------------------------------------
+-------------------------------------------------------------------------------
+	MESSENGER					  	    {MESSENGER}
+-------------------------------------------------------------------------------
 
 Attributes:
 
 	output:			OUTPUT
 	user_list:		HASH_TABLE[USER]
 	group_list:		HASH_TABLE[GROUP]
-	message_list:		HASH_TABLE[MESSAGE]    -- By virtue of mapping, creates message_id
+	message_list:		HASH_TABLE[MESSAGE]    -- By virtue of mapping, 
+						       -- creates message_id
 	
----------------------------------------------------------------------
+-------------------------------------------------------------------------------
 	MESSENGER
----------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 Initialization:
 
@@ -47,8 +48,11 @@ Commands Planning:
 	end
 	
 	send_message (uid: INTEGER_64; gid: INTEGER_64; txt: STRING)
+	local
+		l_message: MESSAGE
 	do			
-	
+		l_message.make (uid, gid, txt)
+		message_list.force (l_message)
 	end
 	
 	read_message (uid: INTEGER_64; mid: INTEGER_64)
@@ -58,32 +62,18 @@ Commands Planning:
 	
 	delete_message (uid: INTEGER_64; mid: INTEGER_64)
 	do				      
-	
+	s
 	end
 	
 	set_message_preview (n: INTEGER_64)
 	do		
-	
-	end
-	
-Queries Planning:
-
-	list_new_messages (uid: INTEGER_64)
-	do
-		l_user := get_user (uid)
-		across l_user.get_user_messages from m
-		if l_user.get_user_messages.get_status (m) ~ "unread" then
-			
+		output.set_preview_length (n)
 	end
 	
 Output Planning:
 
 	out: STRING
 	do
-		if output.info_is_required then
-			-- export info from get_...
-		end
-		
 		Result := output.print_output
 	end
 			
@@ -92,6 +82,9 @@ Information Export:
 	get_user (uid: INTEGER_64): USER
 	do
 		-- Some across notation with Result
+		across 
+			user_list as user
+		
 	end
 	
 	get_message (mid: INTEGER_64): MESSAGE
@@ -104,9 +97,9 @@ Information Export:
 		-- Some across notation with Result
 	end
 	
----------------------------------------------------------------------
-	MESSENGER					     {OUTPUT}
----------------------------------------------------------------------
+-------------------------------------------------------------------------------
+	MESSENGER					     	       {OUTPUT}
+-------------------------------------------------------------------------------
 
 	get_user_list: HASH_TABLE[USER]
 	do
@@ -123,6 +116,6 @@ Information Export:
 		Result := message_list
 	end
 	
----------------------------------------------------------------------
-	MESSENGER					  {MESSENGER}
----------------------------------------------------------------------
+-------------------------------------------------------------------------------
+	MESSENGER					  	    {MESSENGER}
+-------------------------------------------------------------------------------
