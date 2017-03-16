@@ -3,8 +3,6 @@
 A simple messaging program. Current planning is in the docs/ folder.
 
 TODO:
-	Connect Control to Model
-	
 	Finish printing queries and sorting
 		- Sort either before printing or after every entry
 		- Normally print by sorted user_id

@@ -16,9 +16,9 @@ inherit
 create {MESSENGER_ACCESS}
 	make
 
---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+------------------------------------------------------------------------
 --INITIALIZATION
---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+------------------------------------------------------------------------
 
 feature {NONE}
 	make
@@ -40,9 +40,9 @@ feature {NONE}
 			create message_list.make (0)
 		end
 
---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+------------------------------------------------------------------------
 --ATTRIBUTES
---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+------------------------------------------------------------------------
 
 feature
 
@@ -53,9 +53,9 @@ feature
 	group_list_key:			INTEGER_64
 	message_list_key:		INTEGER_64
 
---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+------------------------------------------------------------------------
 --MODEL COMMANDS
---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+------------------------------------------------------------------------
 
 feature
 
@@ -131,9 +131,9 @@ feature
 			print_state := 6
 		end
 
---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+------------------------------------------------------------------------
 --PRINTING
---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+------------------------------------------------------------------------
 
 feature {MESSENGER} -- Printing Attributes
 
@@ -253,7 +253,25 @@ feature {MESSENGER} -- Hidden Printing Query Blocks
 	do
 		create Result.make_from_string("  ")
 		Result.append ("Registrations:%N")
-		if user_list.count /= 0 then
+		if user_list.count /= 0 then			-- Strengthen this
+			across
+				user_list as user
+			loop
+				Result.append ("      [")
+				Result.append (user.key.out)
+				Result.append (", ")
+				Result.append (user.item.get_name)
+				Result.append ("]->{")
+				across
+					group_list as group
+				loop
+					if group.item.is_a_member (user.item.get_id) then		-- Figure out printing for multiple or single registrations
+						Result.append (group.item.get_id.out)
+						Result.append ("->")
+						Result.append (group.item.get_name)
+					end
+				end
+			end
 		end
 		-- Print
 	end
@@ -309,23 +327,29 @@ feature {MESSENGER} -- Main Printing Queries
 	print_list_users: STRING
 		do
 			create Result.make_empty
+			Result.append (print_status_message)
+			Result.append ("%N")
 			-- Alphabetically sorted
---			if  then
-
---			else
---				"There are no users registered in the system yet."
---			end
+			if user_list.count > 0 then
+				-- Sort and list
+				Result.append ("")
+			else
+				Result.append ("  There are no users registered in the system yet.%N")
+			end
 		end
 
 	print_list_groups: STRING
 		do
 			create Result.make_empty
+			Result.append (print_status_message)
+			Result.append ("%N")
 			-- Alphabetically sorted
---			if  then
-
---			else
---				Result.append ("There are no groups registered in the system yet.")
---			end
+			if group_list.count > 0 then
+				-- Sort and list
+				Result.append ("")
+			else
+				Result.append ("  There are no groups registered in the system yet.%N")
+			end
 		end
 
 	print_list_new_messages: STRING
@@ -348,9 +372,9 @@ feature {MESSENGER} -- Main Printing Queries
 --			end
 		end
 
---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+------------------------------------------------------------------------
 --INTERNAL INFORMATION QUERIES
---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+------------------------------------------------------------------------
 
 feature {MESSENGER}
 
@@ -388,9 +412,9 @@ feature {MESSENGER}
 			Result := l_group
 		end
 
---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+------------------------------------------------------------------------
 --DEFENSIVE CHECKS
---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+------------------------------------------------------------------------
 
 feature {ETF_COMMAND}
 
