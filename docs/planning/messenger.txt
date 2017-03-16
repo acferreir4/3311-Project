@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------
-	MESSENGER											  {MESSENGER}
+	MESSENGER					  {MESSENGER}
 ---------------------------------------------------------------------
 
 Attributes:
@@ -7,7 +7,7 @@ Attributes:
 	output:			OUTPUT
 	user_list:		HASH_TABLE[USER]
 	group_list:		HASH_TABLE[GROUP]
-	message_list:	HASH_TABLE[MESSAGE]		-- By virtue of mapping, creates message_id
+	message_list:		HASH_TABLE[MESSAGE]    -- By virtue of mapping, creates message_id
 	
 ---------------------------------------------------------------------
 	MESSENGER
@@ -18,8 +18,8 @@ Initialization:
 	make
 	do
 		output.make
-		create {HASH_TABLE[USER]}		user_list.make (0)
-		create {HASH_TABLE[GROUP]}		group_list.make (0)
+		create {HASH_TABLE[USER]}	user_list.make (0)
+		create {HASH_TABLE[GROUP]}	group_list.make (0)
 		create {HASH_TABLE[MESSAGE]}	message_list.make (0)
 	end
 	
@@ -61,7 +61,7 @@ Commands Planning:
 	
 	end
 	
-	set_message_preview	(n: INTEGER_64)
+	set_message_preview (n: INTEGER_64)
 	do		
 	
 	end
@@ -105,7 +105,7 @@ Information Export:
 	end
 	
 ---------------------------------------------------------------------
-	MESSENGER												 {OUTPUT}
+	MESSENGER					     {OUTPUT}
 ---------------------------------------------------------------------
 
 	get_user_list: HASH_TABLE[USER]
@@ -124,5 +124,5 @@ Information Export:
 	end
 	
 ---------------------------------------------------------------------
-	MESSENGER											  {MESSENGER}
+	MESSENGER					  {MESSENGER}
 ---------------------------------------------------------------------

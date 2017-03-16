@@ -1,15 +1,15 @@
 ---------------------------------------------------------------------
-	USER											 		   {USER}
+	USER						       {USER}
 ---------------------------------------------------------------------
 
 Attributes:
 
-	user_id:			INTEGER_64
-	user_name:			STRING
+	user_id:		INTEGER_64
+	user_name:		STRING
 	user_messages:		LIST[TUPLE [message_id: INTEGER_64; status: STRING]]
 	
 ---------------------------------------------------------------------
-	USER											 		 
+	USER								 
 ---------------------------------------------------------------------
 
 Initialization:

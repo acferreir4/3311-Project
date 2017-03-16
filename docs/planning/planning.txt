@@ -2,17 +2,17 @@ System:
 
 	Set of USERs:
 		HASH[USER]:
-				user_id:			INTEGER_64
-				user_name:			STRING
+				user_id:		INTEGER_64
+				user_name:		STRING
 				user_messages:		ARRAY[TUPLE [MESSAGE_ID, STATUS]]
 
 	Set of GROUPs:
 		HASH[GROUP]:
-				group_id:			INTEGER_64
-				group_name:			STRING
+				group_id:		INTEGER_64
+				group_name:		STRING
 				group_members:		ARRAY[USER_ID]
 				
-	Sort HASH[USER] and HASH[GROUP] by name (alphabetically)						<- OUTSOURCE TO OUTPUT CLASS
+	Sort HASH[USER] and HASH[GROUP] by name (alphabetically)       <- OUTSOURCE TO OUTPUT CLASS
 	
 	Set of MESSAGEs:
 		HASH[MESSAGE]:
