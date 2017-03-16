@@ -6,16 +6,16 @@ note
 
 class
 	ETF_LIST_USERS
-inherit 
+inherit
 	ETF_LIST_USERS_INTERFACE
 		redefine list_users end
 create
 	make
-feature -- command 
+feature -- command
 	list_users
     	do
 			-- perform some update on the model state
-			model.default_update
+--			model.default_update
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

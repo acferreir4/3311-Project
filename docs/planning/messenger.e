@@ -18,7 +18,7 @@ Initialization:
 
 	make
 	do
-		output.make
+		create output.make
 		create {HASH_TABLE[USER]}	user_list.make (0)
 		create {HASH_TABLE[GROUP]}	group_list.make (0)
 		create {HASH_TABLE[MESSAGE]}	message_list.make (0)
