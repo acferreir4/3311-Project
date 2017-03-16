@@ -180,8 +180,69 @@ feature {OUTPUT} -- Output Information Queries
 
 feature -- Defensive Checks
 
---	user_exists
---  message_exists
---  group_exists
+	is_positive_num (a_num: INTEGER_64): BOOLEAN
+	do
+		Result := a_num.is_greater (0)
+	end
+
+	is_unused_uid (a_uid: INTEGER_64): BOOLEAN
+	do
+		Result := across user_list as user all user.item.get_id /= a_uid end
+	end
+
+	is_unused_gid (a_gid: INTEGER_64): BOOLEAN
+	do
+		Result := across group_list as group all group.item.get_id /= a_gid end
+	end
+
+	is_valid_name (a_name: STRING): BOOLEAN
+	do
+		Result := a_name.at (1).is_alpha
+	end
+
+	user_exists (a_uid: INTEGER_64): BOOLEAN
+	do
+		Result := true
+	end
+
+	group_exists (a_gid: INTEGER_64): BOOLEAN
+	do
+		Result := true
+	end
+
+	registration_exists (a_uid: INTEGER_64; a_gid: INTEGER_64): BOOLEAN
+	do
+		Result := true
+	end
+
+	is_empty_msg (a_msg: STRING): BOOLEAN
+	do
+		Result := a_msg.count.is_greater (0)
+	end
+
+	user_authorized_send (a_uid: INTEGER_64; a_gid: INTEGER_64): BOOLEAN
+	do
+		Result := true
+	end
+
+	message_exists (a_mid: INTEGER_64): BOOLEAN
+	do
+		Result := true
+	end
+
+	user_authorized_access (a_uid: INTEGER_64; a_mid: INTEGER_64): BOOLEAN
+	do
+		Result := true
+	end
+
+	message_is_read (a_uid: INTEGER_64; a_mid: INTEGER_64): BOOLEAN
+	do
+		Result := true
+	end
+
+	message_deletable
+	do
+		
+	end
 
 end

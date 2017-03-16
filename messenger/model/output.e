@@ -41,8 +41,20 @@ feature -- Visible Commands
 	error_flag (a_error_flag: INTEGER)
 	do
 		inspect a_error_flag
-			when 0 then error_message := ""
-			when 1 then error_message := ""
+			when  0 then error_message := "ID must be a positive integer."
+			when  1 then error_message := "ID already in use"
+			when  2 then error_message := "User name must start with a letter."
+			when  3 then error_message := "Group name must start with a letter."
+			when  4 then error_message := "User with this ID does not exist."
+			when  5 then error_message := "Group with this ID does not exist."
+			when  6 then error_message := "This registration already exists."
+			when  7 then error_message := "A message may not be an empty string."
+			when  8 then error_message := "User not authorized to send messages to the specified group."
+			when  9 then error_message := "Message with this ID does not exist."
+			when 10 then error_message := "User not authorized to access this message."
+			when 11 then error_message := "Message has already been read. See 'list_old_messages'."
+			when 12 then error_message := "Message with this ID not found in old/read messages."
+			when 13 then error_message := "Message length must be greater than zero."
 		end
 		print_state		:= 1
 		status_message	:= "ERROR"
