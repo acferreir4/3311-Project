@@ -12,7 +12,7 @@ create
 
 feature {NONE} -- Initialization
 
-	make (a_message_sender: INTEGER_64; a_group_id: INTEGER_64; a_message_content: STRING)
+	make (a_message_sender, a_group_id: INTEGER_64; a_message_content: STRING)
 		do
 			message_group	:= a_group_id
 			message_sender	:= a_message_sender
