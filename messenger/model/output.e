@@ -1,6 +1,6 @@
 note
 	description: "Summary description for {OUTPUT}."
-	author: ""
+	author: "DNSheng"
 	date: "$Date$"
 	revision: "$Revision$"
 
@@ -18,13 +18,13 @@ feature {NONE} -- Initialization
 		do
 			status_counter	:= 0
 			status_message	:= "OK"
-			messenger		:= messenger_access.m
+			messenger	:= messenger_access.m
 			create error_message.make_empty
 		end
 
 feature {OUTPUT} -- Attributes
 
-	messenger: 		MESSENGER
+	messenger:	MESSENGER
 	error_message:	STRING
 	status_message:	STRING
 	print_state:	INTEGER_64
@@ -56,7 +56,7 @@ feature -- Visible Commands
 			when 12 then error_message := "Message with this ID not found in old/read messages."
 			when 13 then error_message := "Message length must be greater than zero."
 		end
-		print_state		:= 1
+		print_state	:= 1
 		status_message	:= "ERROR"
 	end
 
@@ -65,7 +65,7 @@ feature -- Visible Queries
 	print_output: STRING
 	do
 		inspect print_state
-			when 0 then	Result := print_default_state
+			when 0 then Result := print_default_state
 			when 1 then Result := print_error_state
 			when 2 then Result := list_groups
 			when 3 then Result := list_new_messages
@@ -79,7 +79,7 @@ feature {OUTPUT} -- Internal Commands
 
 	internal_reset
 	do
-		print_state		:= 0
+		print_state	:= 0
 		error_message	:= ""
 		status_message	:= "OK"
 		status_counter	:= status_counter + 1
