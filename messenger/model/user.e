@@ -1,6 +1,6 @@
 note
 	description: "Summary description for {USER}."
-	author: ""
+	author: "DNSheng"
 	date: "$Date$"
 	revision: "$Revision$"
 
@@ -21,8 +21,8 @@ feature {NONE} -- Initialization
 
 feature {USER} -- Features
 
-	user_id: 		INTEGER_64
-	user_name: 		STRING
+	user_id:	INTEGER_64
+	user_name: 	STRING
 	user_messages:	HASH_TABLE[STRING, INTEGER_64]
 
 feature -- Visible Queries
