@@ -16,8 +16,15 @@ feature -- command
 		require else
 			add_user_precond(uid, user_name)
     	do
-			-- perform some update on the model state
---			model.default_update
+			if not model.is_positive_num (uid) then
+				model.set_error_flag (0)
+			elseif not model.is_unused_uid (uid) then
+				model.set_error_flag (1)
+			elseif not model.is_valid_name (user_name) then
+				model.set_error_flag (2)
+			else
+				model.add_user (uid, user_name)
+			end
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

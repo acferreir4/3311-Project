@@ -21,9 +21,9 @@ feature {NONE} -- Initialization
 
 feature {GROUP} -- Attributes
 
-	group_id:	INTEGER_64
-	group_name:	STRING
-	group_members:	LIST[INTEGER_64]
+	group_id:			INTEGER_64
+	group_name:			STRING
+	group_members:		LIST[INTEGER_64]
 
 feature -- Visible Commands
 
@@ -47,6 +47,11 @@ feature -- Visible Queries
 	get_members: LIST[INTEGER_64]
 		do
 			Result := group_members
+		end
+
+	is_a_member (a_uid: INTEGER_64): BOOLEAN
+		do
+			Result := across group_members as member some member.item = a_uid end
 		end
 
 end

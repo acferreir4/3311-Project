@@ -16,8 +16,15 @@ feature -- command
 		require else
 			add_group_precond(gid, group_name)
     	do
-			-- perform some update on the model state
---			model.default_update
+    		if not model.is_positive_num (gid) then
+				model.set_error_flag (0)
+			elseif not model.is_unused_gid (gid) then
+				model.set_error_flag (1)
+			elseif not model.is_valid_name (group_name) then
+				model.set_error_flag (3)
+			else
+				model.add_group (gid, group_name)
+    		end
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

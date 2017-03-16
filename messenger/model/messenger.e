@@ -19,25 +19,25 @@ create {MESSENGER_ACCESS}
 feature {NONE} -- Initialization
 	make
 		do
-			user_list_key 		:= 1
+			user_list_key		:= 1
 			group_list_key		:= 1
 			message_list_key	:= 1
 
 			create output.make
-			create user_list.make (0)
-			create group_list.make (0)
-			create message_list.make (0)
+			create {ARRAYED_LIST[TUPLE [user: USER; user_key: INTEGER_64]]} user_list.make (1)
+			create {ARRAYED_LIST[TUPLE [group: GROUP; group_key: INTEGER_64]]} group_list.make (1)
+			create message_list.make (1)
 		end
 
-feature {MESSENGER} -- Attributes
+feature -- Attributes
 
-	output:			OUTPUT
-	user_list:		HASH_TABLE[USER, INTEGER_64]
-	group_list:		HASH_TABLE[GROUP, INTEGER_64]
-	message_list:		HASH_TABLE[MESSAGE, INTEGER_64]
-	user_list_key:		INTEGER_64
-	group_list_key:		INTEGER_64
-	message_list_key:	INTEGER_64
+	output:					OUTPUT
+	user_list:				LIST[TUPLE [user: USER; user_key: INTEGER_64]]						-- Hash tables, for easy ordinary printing format
+	group_list:				LIST[TUPLE [group: GROUP; group_key: INTEGER_64]]							-- Ordinary: Print ordered by INTEGER_64 increasing
+	message_list:			HASH_TABLE[MESSAGE, INTEGER_64]					-- List: Print ordered by X.name alphabetically
+	user_list_key:			INTEGER_64
+	group_list_key:			INTEGER_64
+	message_list_key:		INTEGER_64
 
 feature -- Visible Commands
 
@@ -80,12 +80,12 @@ feature -- Visible Commands
 
 	read_message (a_uid, a_mid: INTEGER_64)
 		do
-
+			get_user (a_uid).read_message (a_mid)
 		end
 
 	delete_message (a_uid, a_mid: INTEGER_64)
 		do
-
+			get_user (a_uid).delete_message (a_mid)
 		end
 
 	set_message_preview (a_n: INTEGER_64)
@@ -95,22 +95,27 @@ feature -- Visible Commands
 
 	list_groups
 		do
-			-- Defer this task to OUTPUT
+			output.set_print_state (3)
 		end
 
 	list_new_messages (a_uid: INTEGER_64)
 		do
-			-- Defer this task to OUTPUT
+			output.set_print_state (4)
 		end
 
 	list_old_messages (a_uid: INTEGER_64)
 		do
-			-- Defer this task to OUTPUT
+			output.set_print_state (5)
 		end
 
 	list_users
 		do
-			-- Defer this task to OUTPUT
+			output.set_print_state (6)
+		end
+
+	set_error_flag (error_flag: INTEGER)
+		do
+			output.error_flag (error_flag)
 		end
 
 feature -- Visible Queries
@@ -118,6 +123,9 @@ feature -- Visible Queries
 	out: STRING
 		do
 			Result := output.print_output
+			-- Having the printing implementation here works, yet
+			-- exporting it to OUTPUT causes an exception, where
+			-- get_user_list returns void
 		end
 
 feature -- Information Queries						(YET TO HIDE)
@@ -129,20 +137,15 @@ feature -- Information Queries						(YET TO HIDE)
 			create l_user.make (0, "")				-- VEVI Compiler
 
 			across
-				user_list as user
+				user_list as usr
 			loop
-				if user.item.get_id = a_uid then
-					l_user := user.item
+				if usr.item.user.get_id = a_uid then
+					l_user := usr.item.user
 				end
 			end
 
 			Result := l_user
 		end
-
---	get_message (a_mid: INTEGER_64): MESSAGE
---		do
---			Not sure if necessary atm...
---		end
 
 	get_group (a_gid: INTEGER_64): GROUP
 		local
@@ -151,10 +154,10 @@ feature -- Information Queries						(YET TO HIDE)
 			create l_group.make (0, "")				-- VEVI Compiler
 
 			across
-				group_list as group
+				group_list as grp
 			loop
-				if group.item.get_id = a_gid then
-					l_group := group.item
+				if grp.item.group.get_id = a_gid then
+					l_group := grp.item.group
 				end
 			end
 
@@ -163,12 +166,15 @@ feature -- Information Queries						(YET TO HIDE)
 
 feature {OUTPUT} -- Output Information Queries
 
-	get_user_list: HASH_TABLE[USER, INTEGER_64]
+	get_user_list: LIST[TUPLE [USER, INTEGER_64]]
+		local
+			l_user_list: LIST[TUPLE [USER, INTEGER_64]]
 		do
-			Result := user_list
+			l_user_list := user_list
+			Result := l_user_list
 		end
 
-	get_group_list: HASH_TABLE[GROUP, INTEGER_64]
+	get_group_list: LIST[TUPLE [GROUP, INTEGER_64]]
 		do
 			Result := group_list
 		end
@@ -178,41 +184,41 @@ feature {OUTPUT} -- Output Information Queries
 			Result := message_list
 		end
 
-feature -- Defensive Checks
+feature {ETF_COMMAND} -- Defensive Checks
 
 	is_positive_num (a_num: INTEGER_64): BOOLEAN
 	do
-		Result := a_num.is_greater (0)
+		Result := a_num.as_integer_32 > 0
 	end
 
 	is_unused_uid (a_uid: INTEGER_64): BOOLEAN
 	do
-		Result := across user_list as user all user.item.get_id /= a_uid end
+		Result := across user_list as usr all usr.item.user.get_id /= a_uid end
 	end
 
 	is_unused_gid (a_gid: INTEGER_64): BOOLEAN
 	do
-		Result := across group_list as group all group.item.get_id /= a_gid end
+		Result := across group_list as grp all grp.item.group.get_id /= a_gid end
 	end
 
 	is_valid_name (a_name: STRING): BOOLEAN
 	do
-		Result := a_name.at (1).is_alpha
+		Result := not a_name.is_empty and a_name.at (1).is_alpha
 	end
 
 	user_exists (a_uid: INTEGER_64): BOOLEAN
 	do
-		Result := true
+		Result := across user_list as usr some usr.item.user.get_id = a_uid end
 	end
 
 	group_exists (a_gid: INTEGER_64): BOOLEAN
 	do
-		Result := true
+		Result := across group_list as grp some grp.item.group.get_id = a_gid end
 	end
 
-	registration_exists (a_uid, a_gid: INTEGER_64): BOOLEAN
+	user_is_member (a_uid, a_gid: INTEGER_64): BOOLEAN
 	do
-		Result := true
+		Result := get_group (a_gid).is_a_member (a_uid)
 	end
 
 	is_empty_msg (a_msg: STRING): BOOLEAN
@@ -222,27 +228,32 @@ feature -- Defensive Checks
 
 	user_authorized_send (a_uid, a_gid: INTEGER_64): BOOLEAN
 	do
-		Result := true
+		Result := user_is_member (a_uid, a_gid)
 	end
 
 	message_exists (a_mid: INTEGER_64): BOOLEAN
 	do
-		Result := true
+		Result := message_list.has (a_mid)
 	end
 
 	user_authorized_access (a_uid, a_mid: INTEGER_64): BOOLEAN
 	do
-		Result := true
+		Result := get_user (a_uid).has_message (a_mid)
 	end
 
-	message_is_read (a_uid, a_mid: INTEGER_64): BOOLEAN
+	message_was_read (a_uid, a_mid: INTEGER_64): BOOLEAN
 	do
-		Result := true
+		Result := get_user (a_uid).message_was_read (a_mid)
 	end
 
-	message_deletable
+	message_deletable (a_uid, a_mid: INTEGER_64): BOOLEAN
 	do
-		
+		Result := get_user (a_uid).message_deletable (a_mid)
+	end
+
+	appropriate_msg_length (a_message: STRING): BOOLEAN
+	do
+		Result := a_message.count.is_greater (0)
 	end
 
 end

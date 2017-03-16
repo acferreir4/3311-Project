@@ -16,26 +16,34 @@ feature {NONE} -- Initialization
 		local
 			messenger_access: MESSENGER_ACCESS
 		do
-			status_counter	:= 0
-			status_message	:= "OK"
-			messenger	:= messenger_access.m
+			status_counter			:= 0
+			print_state				:= 0
+			status_message			:= "OK"
+			messenger				:= messenger_access.m
+
 			create error_message.make_empty
 		end
 
 feature {OUTPUT} -- Attributes
 
-	messenger:	MESSENGER
-	error_message:	STRING
-	status_message:	STRING
-	print_state:	INTEGER_64
-	status_counter:	INTEGER_64
-	preview_length:	INTEGER_64
+	messenger:					MESSENGER
+	error_message:				STRING
+	status_message:				STRING
+	print_state:				INTEGER_64
+	status_counter:				INTEGER_64
+	preview_length:				INTEGER_64
+	messenger_populated:		BOOLEAN
 
-feature -- Visible Commands
+feature {MESSENGER} -- Visible Commands
 
 	set_preview_length (a_preview_length: INTEGER_64)
 	do
 		preview_length := a_preview_length
+	end
+
+	set_print_state (a_print_state: INTEGER)
+	do
+		print_state := a_print_state
 	end
 
 	error_flag (a_error_flag: INTEGER)
@@ -56,7 +64,7 @@ feature -- Visible Commands
 			when 12 then error_message := "Message with this ID not found in old/read messages."
 			when 13 then error_message := "Message length must be greater than zero."
 		end
-		print_state	:= 1
+		print_state	:= 2
 		status_message	:= "ERROR"
 	end
 
@@ -65,12 +73,13 @@ feature -- Visible Queries
 	print_output: STRING
 	do
 		inspect print_state
-			when 0 then Result := print_default_state
-			when 1 then Result := print_error_state
-			when 2 then Result := list_groups
-			when 3 then Result := list_new_messages
-			when 4 then Result := list_old_messages
-			when 5 then Result := list_users
+			when 0 then Result := print_initial_state
+			when 1 then Result := print_default_state
+			when 2 then Result := print_error_state
+			when 3 then Result := list_groups
+			when 4 then Result := list_new_messages
+			when 5 then Result := list_old_messages
+			when 6 then Result := list_users
 		end
 		internal_reset
 	end
@@ -79,10 +88,10 @@ feature {OUTPUT} -- Internal Commands
 
 	internal_reset
 	do
-		print_state	:= 0
-		error_message	:= ""
-		status_message	:= "OK"
-		status_counter	:= status_counter + 1
+		print_state 		:= 1
+		error_message		:= ""
+		status_message		:= "OK"
+		status_counter		:= status_counter + 1
 	end
 
 feature {OUTPUT} -- Internal Printing Queries
@@ -93,6 +102,7 @@ feature {OUTPUT} -- Internal Printing Queries
 		Result.append (status_counter.out)
 		Result.append (":  ")
 		Result.append (status_message)
+		Result.append ("%N")
 	end
 
 	print_error_message: STRING
@@ -103,28 +113,51 @@ feature {OUTPUT} -- Internal Printing Queries
 
 	print_users: STRING
 	local
-		l_user_list: HASH_TABLE[USER, INTEGER_64]
+		l_user_list: LIST[TUPLE [user: USER; user_key: INTEGER_64]]
 	do
 		create Result.make_from_string("  ")
 		Result.append ("Users:%N")
 		l_user_list := messenger.get_user_list
-		-- Print
+		if l_user_list.count = 0 then
+			Result.append ("%N")
+		else
+			across
+				l_user_list as usr
+			loop
+				Result.append ("      ")
+				Result.append (usr.item.user_key.out)
+				Result.append ("->")
+				Result.append (usr.item.user.get_name)
+				Result.append ("%N")
+			end
+		end
 	end
 
 	print_groups: STRING
 	local
-		l_group_list: HASH_TABLE[GROUP, INTEGER_64]
+		l_group_list: LIST[TUPLE [group: GROUP; group_key: INTEGER_64]]
 	do
-		create Result.make_from_string("  ")
 		create Result.make_from_string("  ")
 		Result.append ("Groups:%N")
 		l_group_list := messenger.get_group_list
-		-- Print
+		if l_group_list.count = 0 then
+			Result.append ("%N")
+		else
+			across
+				l_group_list as grp
+			loop
+				Result.append ("      ")
+				Result.append (grp.item.group_key.out)
+				Result.append ("->")
+				Result.append (grp.item.group.get_name)
+				Result.append ("%N")
+			end
+		end
 	end
 
 	print_registrations: STRING
 	local
-		l_user_list: HASH_TABLE[USER, INTEGER_64]
+		l_user_list: LIST[TUPLE [user: USER; user_key: INTEGER_64]]
 	do
 		create Result.make_from_string("  ")
 		Result.append ("Registrations:%N")
@@ -144,7 +177,7 @@ feature {OUTPUT} -- Internal Printing Queries
 
 	print_message_state: STRING
 	local
-		l_user_list: HASH_TABLE[USER, INTEGER_64]
+		l_user_list: LIST[TUPLE [user: USER; user_key: INTEGER_64]]
 	do
 		create Result.make_from_string("  ")
 		Result.append ("Message state:%N")
@@ -154,25 +187,30 @@ feature {OUTPUT} -- Internal Printing Queries
 
 feature {OUTPUT} -- Main Printing Queries
 
+	print_initial_state: STRING
+		do
+			create Result.make_empty
+			Result.append (print_status_message)
+		end
+
 	print_default_state: STRING
 		do
 			create Result.make_empty
 			Result.append (print_status_message)
 			Result.append ("%N")
 			Result.append (print_users)
-			Result.append ("%N")
 			Result.append (print_groups)
-			Result.append ("%N")
 			Result.append (print_registrations)
-			Result.append ("%N")
 			Result.append (print_all_messages)
-			Result.append ("%N")
 			Result.append (print_message_state)
 		end
 
 	print_error_state: STRING
 		do
 			create Result.make_empty
+			Result.append (print_status_message)
+			Result.append ("%N")
+			Result.append (print_error_message)
 		end
 
 	list_users: STRING

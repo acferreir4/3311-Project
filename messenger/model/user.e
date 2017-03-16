@@ -21,9 +21,9 @@ feature {NONE} -- Initialization
 
 feature {USER} -- Features
 
-	user_id:	INTEGER_64
-	user_name: 	STRING
-	user_messages:	HASH_TABLE[STRING, INTEGER_64]
+	user_id:			INTEGER_64
+	user_name: 			STRING
+	user_messages:		HASH_TABLE[STRING, INTEGER_64]
 
 feature -- Visible Queries
 
@@ -36,10 +36,23 @@ feature -- Visible Queries
 		do
 			Result := user_name
 		end
+		
+feature {MESSENGER} -- Defensive Export Queries
 
-	get_messages: HASH_TABLE[STRING, INTEGER_64]
+	has_message (a_mid: INTEGER_64): BOOLEAN
 		do
-			Result := user_messages
+			Result := user_messages.has (a_mid)
+		end
+
+	message_was_read (a_mid: INTEGER_64): BOOLEAN
+		do
+			Result := user_messages.at (a_mid) ~ "read"
+		end
+
+	message_deletable (a_mid: INTEGER_64): BOOLEAN
+		do
+			Result := user_messages.at (a_mid) ~ "read" or
+					  user_messages.at (a_mid) ~ "unread"
 		end
 
 feature -- Visible Commands
