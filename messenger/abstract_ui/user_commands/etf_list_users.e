@@ -14,8 +14,7 @@ create
 feature -- command
 	list_users
     	do
-			-- perform some update on the model state
---			model.default_update
+			model.list_users
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

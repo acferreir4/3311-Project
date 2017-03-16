@@ -14,8 +14,11 @@ create
 feature -- command
 	set_message_preview(n: INTEGER_64)
     	do
-			-- perform some update on the model state
---			model.default_update
+			if not model.is_positive_num (n) then
+				model.set_error_flag (13)
+			else
+				model.set_message_preview (n)
+			end
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

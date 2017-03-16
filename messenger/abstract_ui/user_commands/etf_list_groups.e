@@ -14,8 +14,7 @@ create
 feature -- command
 	list_groups
     	do
-			-- perform some update on the model state
---			model.default_update
+			model.list_groups
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

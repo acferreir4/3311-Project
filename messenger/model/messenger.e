@@ -46,9 +46,9 @@ feature {NONE}
 
 feature
 
-	user_list:				HASH_TABLE[USER, INTEGER_64]						-- Hash tables, for easy ordinary printing format
-	group_list:				HASH_TABLE[GROUP, INTEGER_64] 							-- Ordinary: Print ordered by INTEGER_64 increasing
-	message_list:			HASH_TABLE[MESSAGE, INTEGER_64]							-- List: Print ordered by X.name alphabetically
+	user_list:				HASH_TABLE[USER, INTEGER_64]
+	group_list:				HASH_TABLE[GROUP, INTEGER_64]
+	message_list:			HASH_TABLE[MESSAGE, INTEGER_64]
 	user_list_key:			INTEGER_64
 	group_list_key:			INTEGER_64
 	message_list_key:		INTEGER_64
@@ -131,11 +131,6 @@ feature
 			print_state := 6
 		end
 
-	set_error_flag (a_error_flag: INTEGER)
-		do
-			error_flag (a_error_flag)
-		end
-
 --%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 --PRINTING
 --%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -160,7 +155,7 @@ feature {MESSENGER} -- Printing Commands
 
 feature -- Visible Printing Commands
 
-	error_flag (a_error_flag: INTEGER)
+	set_error_flag (a_error_flag: INTEGER)
 	do
 		inspect a_error_flag
 			when  0 then error_message := "ID must be a positive integer."
@@ -315,22 +310,42 @@ feature {MESSENGER} -- Main Printing Queries
 		do
 			create Result.make_empty
 			-- Alphabetically sorted
+--			if  then
+
+--			else
+--				"There are no users registered in the system yet."
+--			end
 		end
 
 	print_list_groups: STRING
 		do
 			create Result.make_empty
 			-- Alphabetically sorted
+--			if  then
+
+--			else
+--				Result.append ("There are no groups registered in the system yet.")
+--			end
 		end
 
 	print_list_new_messages: STRING
 		do
 			create Result.make_empty
+--			if  then
+
+--			else
+--				Result.append ("There are no new messages for this user.")
+--			end
 		end
 
 	print_list_old_messages: STRING
 		do
 			create Result.make_empty
+--			if  then
+
+--			else
+--				Result.append ("There are no old messages for this user.")
+--			end
 		end
 
 --%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
