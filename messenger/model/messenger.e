@@ -1,6 +1,6 @@
 note
 	description: "A default business model."
-	author: "Jackie Wang"
+	author: "DNSheng"
 	date: "$Date$"
 	revision: "$Revision$"
 
@@ -31,9 +31,9 @@ feature {NONE} -- Initialization
 
 feature {MESSENGER} -- Attributes
 
-	output: 			OUTPUT
-	user_list:			HASH_TABLE[USER, INTEGER_64]
-	group_list:			HASH_TABLE[GROUP, INTEGER_64]
+	output:			OUTPUT
+	user_list:		HASH_TABLE[USER, INTEGER_64]
+	group_list:		HASH_TABLE[GROUP, INTEGER_64]
 	message_list:		HASH_TABLE[MESSAGE, INTEGER_64]
 	user_list_key:		INTEGER_64
 	group_list_key:		INTEGER_64
@@ -64,12 +64,12 @@ feature -- Visible Commands
 			user_list_key := user_list_key + 1
 		end
 
-	register_user (a_uid: INTEGER_64; a_gid: INTEGER_64)
+	register_user (a_uid, a_gid: INTEGER_64)
 		do
 			get_group (a_gid).register_user (a_uid)
 		end
 
-	send_message (a_uid: INTEGER_64; a_gid: INTEGER_64; a_txt: STRING)
+	send_message (a_uid, a_gid: INTEGER_64; a_txt: STRING)
 		local
 			l_message: MESSAGE
 		do
@@ -78,12 +78,12 @@ feature -- Visible Commands
 			message_list_key := message_list_key + 1
 		end
 
-	read_message (a_uid: INTEGER_64; a_mid: INTEGER_64)
+	read_message (a_uid, a_mid: INTEGER_64)
 		do
 
 		end
 
-	delete_message (a_uid: INTEGER_64; a_mid: INTEGER_64)
+	delete_message (a_uid, a_mid: INTEGER_64)
 		do
 
 		end
@@ -210,7 +210,7 @@ feature -- Defensive Checks
 		Result := true
 	end
 
-	registration_exists (a_uid: INTEGER_64; a_gid: INTEGER_64): BOOLEAN
+	registration_exists (a_uid, a_gid: INTEGER_64): BOOLEAN
 	do
 		Result := true
 	end
@@ -220,7 +220,7 @@ feature -- Defensive Checks
 		Result := a_msg.count.is_greater (0)
 	end
 
-	user_authorized_send (a_uid: INTEGER_64; a_gid: INTEGER_64): BOOLEAN
+	user_authorized_send (a_uid, a_gid: INTEGER_64): BOOLEAN
 	do
 		Result := true
 	end
@@ -230,12 +230,12 @@ feature -- Defensive Checks
 		Result := true
 	end
 
-	user_authorized_access (a_uid: INTEGER_64; a_mid: INTEGER_64): BOOLEAN
+	user_authorized_access (a_uid, a_mid: INTEGER_64): BOOLEAN
 	do
 		Result := true
 	end
 
-	message_is_read (a_uid: INTEGER_64; a_mid: INTEGER_64): BOOLEAN
+	message_is_read (a_uid, a_mid: INTEGER_64): BOOLEAN
 	do
 		Result := true
 	end
