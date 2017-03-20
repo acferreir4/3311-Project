@@ -7,7 +7,7 @@ Attributes:
 	user_id:			INTEGER_64
 	user_name:			STRING
 	user_messages:		LIST[TUPLE [message_id: INTEGER_64; status: STRING]]
-	membership:			ARRAY[group_id: INTEGER_64]	-- IDs of groups user is a member of
+	membership:			ARRAY[group_id: INTEGER_64]
 	
 	
 ---------------------------------------------------------------------

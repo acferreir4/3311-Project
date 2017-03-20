@@ -85,6 +85,7 @@ feature
 	register_user (a_uid, a_gid: INTEGER_64)
 		do
 			get_group (a_gid).register_user (a_uid)
+			get_user (a_uid).add_membership (a_gid)
 		end
 
 	send_message (a_uid, a_gid: INTEGER_64; a_txt: STRING)
@@ -250,30 +251,39 @@ feature {MESSENGER} -- Hidden Printing Query Blocks
 	end
 
 	print_registrations: STRING
+	local
+		l_group_print_count: INTEGER
 	do
 		create Result.make_from_string("  ")
 		Result.append ("Registrations:%N")
-		if user_list.count /= 0 then			-- Strengthen this
+		if user_list.count /= 0 and registrations_exist then
 			across
 				user_list as user
 			loop
-				Result.append ("      [")
-				Result.append (user.key.out)
-				Result.append (", ")
-				Result.append (user.item.get_name)
-				Result.append ("]->{")
-				across
-					group_list as group
-				loop
-					if group.item.is_a_member (user.item.get_id) then		-- Figure out printing for multiple or single registrations
-						Result.append (group.item.get_id.out)
+				if user.item.membership_count > 0 then							-- Print for users that are group members
+					l_group_print_count := user.item.membership_count
+					Result.append ("      [")
+					Result.append (user.key.out)
+					Result.append (", ")
+					Result.append (user.item.get_name)
+					Result.append ("]->{")
+					across
+						user.item.get_memberships as group
+					loop
+						Result.append (group.item.out)
 						Result.append ("->")
-						Result.append (group.item.get_name)
+						Result.append (get_group (group.item).get_name)
+						if l_group_print_count > 1 then							-- Deal with ending line for each user
+							Result.append (", ")
+						else
+							Result.append ("}")
+						end
+						l_group_print_count := l_group_print_count - 1
 					end
 				end
 			end
+			Result.append ("%N")
 		end
-		-- Print
 	end
 
 	print_all_messages: STRING
@@ -411,6 +421,17 @@ feature {MESSENGER}
 
 			Result := l_group
 		end
+
+------------------------------------------------------------------------
+--INTERNAL INFORMATION COMMANDS
+------------------------------------------------------------------------
+
+feature {MESSENGER}
+
+	registrations_exist: BOOLEAN
+	do
+		Result := across user_list as user some user.item.get_memberships.count > 0 end
+	end
 
 ------------------------------------------------------------------------
 --DEFENSIVE CHECKS

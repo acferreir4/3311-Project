@@ -17,6 +17,7 @@ feature {NONE} -- Initialization
 				user_id 	:= a_user_id
 				user_name 	:= a_user_name
 				create user_messages.make (0)
+				create {ARRAYED_LIST[INTEGER_64]} membership.make (0)
 		end
 
 feature {USER} -- Features
@@ -24,6 +25,7 @@ feature {USER} -- Features
 	user_id:			INTEGER_64
 	user_name: 			STRING
 	user_messages:		HASH_TABLE[STRING, INTEGER_64]
+	membership:			LIST[INTEGER_64]				-- Sort based on IDs
 
 feature -- Visible Queries
 
@@ -36,7 +38,7 @@ feature -- Visible Queries
 		do
 			Result := user_name
 		end
-		
+
 feature {MESSENGER} -- Defensive Export Queries
 
 	has_message (a_mid: INTEGER_64): BOOLEAN
@@ -55,6 +57,16 @@ feature {MESSENGER} -- Defensive Export Queries
 					  user_messages.at (a_mid) ~ "unread"
 		end
 
+	get_memberships: LIST[INTEGER_64]
+		do
+			Result := membership
+		end
+
+	membership_count: INTEGER
+		do
+			Result := membership.count
+		end
+
 feature -- Visible Commands
 
 	read_message (a_message_id: INTEGER_64)
@@ -70,6 +82,11 @@ feature -- Visible Commands
 	delete_message (a_message_id: INTEGER_64)
 		do
 			user_messages.remove (a_message_id)
+		end
+
+	add_membership (a_gid: INTEGER_64)
+		do
+			membership.force (a_gid)
 		end
 
 end
